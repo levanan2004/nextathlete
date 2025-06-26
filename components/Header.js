@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { supabase } from "../lib/supabaseClient";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 export default function Header() {
   const [user, setUser] = useState(null);
@@ -45,7 +46,7 @@ export default function Header() {
   return (
     <header className="w-full bg-white shadow-md px-2 sm:px-4 md:px-8 h-16 flex items-center sticky top-0 z-20">
       {/* Logo bên trái */}
-      <a
+      <Link
         href="/"
         className="flex items-center gap-2 no-underline flex-shrink-0"
       >
@@ -57,10 +58,10 @@ export default function Header() {
           className="h-14 w-auto object-contain"
           priority
         />
-      </a>
+      </Link>
       {/* Menu giữa */}
       <nav className="hidden md:flex flex-1 justify-center gap-2">
-        <a
+        <Link
           href="/"
           className={`px-4 py-2 rounded-lg flex items-center gap-1 ${
             pathname === "/"
@@ -69,8 +70,8 @@ export default function Header() {
           }`}
         >
           🏆 Sports
-        </a>
-        <a
+        </Link>
+        <Link
           href="/tournaments"
           className={`px-4 py-2 rounded-lg flex items-center gap-1 ${
             pathname === "/tournaments"
@@ -79,8 +80,8 @@ export default function Header() {
           }`}
         >
           🏆 Tournaments
-        </a>
-        <a
+        </Link>
+        <Link
           href="/showcase"
           className={`px-4 py-2 rounded-lg flex items-center gap-1 ${
             pathname === "/showcase"
@@ -89,8 +90,8 @@ export default function Header() {
           }`}
         >
           📹 Showcase
-        </a>
-        <a
+        </Link>
+        <Link
           href="/community"
           className={`px-4 py-2 rounded-lg flex items-center gap-1 ${
             pathname === "/community"
@@ -99,19 +100,19 @@ export default function Header() {
           }`}
         >
           👥 Community
-        </a>
+        </Link>
       </nav>
       {/* Action bên phải */}
       <div className="hidden md:flex items-center gap-4 flex-shrink-0">
         {user ? (
           <>
-            <a
+            <Link
               href="/information"
               className="font-medium text-gray-900 truncate max-w-[120px] hover:underline"
               title="Xem thông tin cá nhân"
             >
               {user.user_metadata?.full_name || user.email}
-            </a>
+            </Link>
             <button
               onClick={handleLogout}
               className="bg-gray-100 text-blue-600 border border-blue-600 rounded-lg px-5 py-2 font-bold hover:bg-gray-200 transition"
@@ -121,18 +122,18 @@ export default function Header() {
           </>
         ) : (
           <>
-            <a
+            <Link
               href="/auth/login"
               className="px-4 py-2 rounded-lg text-gray-800 font-medium hover:bg-gray-100"
             >
               Sign In
-            </a>
-            <a
+            </Link>
+            <Link
               href="/auth/register"
               className="bg-blue-600 text-white rounded-lg px-6 py-2 font-bold hover:bg-blue-700 transition"
             >
               Get Started
-            </a>
+            </Link>
           </>
         )}
       </div>
@@ -183,7 +184,7 @@ export default function Header() {
                 />
               </svg>
             </button>
-            <a
+            <Link
               href="/"
               className={`py-2 flex items-center gap-1 w-full ${
                 pathname === "/"
@@ -193,8 +194,8 @@ export default function Header() {
               onClick={() => setMenuOpen(false)}
             >
               🏆 Sports
-            </a>
-            <a
+            </Link>
+            <Link
               href="/tournaments"
               className={`py-2 flex items-center gap-1 w-full ${
                 pathname === "/tournaments"
@@ -204,8 +205,8 @@ export default function Header() {
               onClick={() => setMenuOpen(false)}
             >
               🏆 Tournaments
-            </a>
-            <a
+            </Link>
+            <Link
               href="/showcase"
               className={`py-2 flex items-center gap-1 w-full ${
                 pathname === "/showcase"
@@ -215,8 +216,8 @@ export default function Header() {
               onClick={() => setMenuOpen(false)}
             >
               📹 Showcase
-            </a>
-            <a
+            </Link>
+            <Link
               href="/community"
               className={`py-2 flex items-center gap-1 w-full ${
                 pathname === "/community"
@@ -226,7 +227,7 @@ export default function Header() {
               onClick={() => setMenuOpen(false)}
             >
               👥 Community
-            </a>
+            </Link>
             <div className="border-t w-full my-2" />
             {user ? (
               <>
@@ -245,20 +246,20 @@ export default function Header() {
               </>
             ) : (
               <>
-                <a
+                <Link
                   href="/auth/login"
                   className="py-2 text-gray-800 font-medium w-full"
                   onClick={() => setMenuOpen(false)}
                 >
                   Sign In
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/auth/register"
                   className="bg-blue-600 text-white rounded-lg px-6 py-2 font-bold w-full text-center mt-1"
                   onClick={() => setMenuOpen(false)}
                 >
                   Get Started
-                </a>
+                </Link>
               </>
             )}
           </div>

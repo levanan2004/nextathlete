@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { supabase } from "../../../lib/supabaseClient";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -229,9 +231,12 @@ export default function LoginPage() {
           <label>
             <input type="checkbox" style={{ marginRight: 6 }} /> Remember me
           </label>
-          <a href="#" style={{ color: "#2563eb", fontWeight: 500 }}>
+          <Link
+            href="/auth/login"
+            style={{ color: "#2563eb", fontWeight: 500 }}
+          >
             Forgot password?
-          </a>
+          </Link>
         </div>
         <button type="submit" style={btnSignIn} disabled={loading}>
           {loading ? "Signing In..." : "Sign In →"}
@@ -254,9 +259,11 @@ export default function LoginPage() {
             style={btnSocial}
             onClick={() => alert("Google login chưa tích hợp")}
           >
-            <img
+            <Image
               src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="Google"
+              width={20}
+              height={20}
               style={{ width: 20, marginRight: 8 }}
             />
             Google
@@ -266,16 +273,18 @@ export default function LoginPage() {
             style={btnSocial}
             onClick={() => alert("Facebook login chưa tích hợp")}
           >
-            <img
+            <Image
               src="https://www.svgrepo.com/show/475647/facebook-color.svg"
               alt="Facebook"
+              width={20}
+              height={20}
               style={{ width: 20, marginRight: 8 }}
             />
             Facebook
           </button>
         </div>
         <div style={{ textAlign: "center", marginTop: 18, fontSize: 15 }}>
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <a
             href="/auth/register"
             style={{ color: "#2563eb", fontWeight: 500 }}

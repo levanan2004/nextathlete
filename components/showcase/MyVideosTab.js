@@ -34,7 +34,7 @@ const MyVideosTab = () => {
         <div className="text-center text-gray-400 py-10">Loading...</div>
       ) : videos.length === 0 ? (
         <div className="text-center text-gray-400 py-10">
-          You haven't uploaded any videos yet.
+          You haven&apos;t uploaded any videos yet.
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">

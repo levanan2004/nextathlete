@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import Image from "next/image";
 
 // Modal hiển thị thông tin user
 function UserModal({ user, open, onClose }) {
@@ -16,7 +17,9 @@ function UserModal({ user, open, onClose }) {
         </button>
         <div className="flex flex-col items-center">
           <div className="font-bold text-xl mb-1">
-            <img
+            <Image
+              width={20}
+              height={20}
               src={
                 user.profile_picture_url || "/assets/images/thumbnail_1.webp"
               }
@@ -126,7 +129,9 @@ const BrowseVideosTab = () => {
       onClick={() => handleAvatarClick(video.users)}
       title={video.users?.full_name}
     >
-      <img
+      <Image
+        width={20}
+        height={20}
         src={
           video.users?.profile_picture_url || "/assets/images/thumbnail_1.webp"
         }

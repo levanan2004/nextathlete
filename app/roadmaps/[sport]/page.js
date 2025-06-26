@@ -27,7 +27,7 @@ const RoadmapDetail = ({ params }) => {
       else setRoadmap(null);
     };
     fetchRoadmap();
-  }, [sport]);
+  }, [sport, decodedSport]);
 
   // Lấy roadmap_levels theo roadmap.id
   useEffect(() => {

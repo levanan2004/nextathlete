@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 export default function TournamentCard({ t }) {
   const percent = Math.round((t.participants / t.maxParticipants) * 100);
@@ -34,7 +35,6 @@ export default function TournamentCard({ t }) {
       }
     };
     fetchUser();
-    // eslint-disable-next-line
   }, []);
 
   const handleRegister = async (e) => {
@@ -63,7 +63,9 @@ export default function TournamentCard({ t }) {
   return (
     <div className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col">
       <div className="relative">
-        <img
+        <Image
+          width={20}
+          height={20}
           src={`/assets/images/${t.thumbnail_url}`}
           alt={t.title}
           className="w-full h-40 object-cover"

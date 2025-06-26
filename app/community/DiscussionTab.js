@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import ArticleComments from "@/components/ArticleComments";
+import Image from "next/image";
 
 export default function DiscussionTab() {
   const [articles, setArticles] = useState([]);
@@ -14,7 +15,6 @@ export default function DiscussionTab() {
   useEffect(() => {
     fetchArticles();
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
-    // eslint-disable-next-line
   }, []);
 
   const fetchArticles = async () => {
@@ -70,7 +70,9 @@ export default function DiscussionTab() {
             className="bg-white rounded-xl shadow p-5 flex flex-col gap-2"
           >
             <div className="flex items-center gap-3">
-              <img
+              <Image
+                width={20}
+                height={20}
                 src={
                   a.users?.profile_picture_url ||
                   "/assets/images/thumbnail_1.webp"

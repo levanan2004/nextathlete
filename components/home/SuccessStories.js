@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 
 const stories = [
@@ -67,7 +68,9 @@ export default function SuccessStories() {
             <div className="relative w-full flex bg-white rounded-2xl shadow-2xl overflow-hidden min-h-[350px]">
               {/* Left: Large image */}
               <div className="w-1/2 min-w-[220px] relative flex flex-col justify-end">
-                <img
+                <Image
+                  width={20}
+                  height={20}
                   src={stories[current].image}
                   alt={stories[current].name}
                   className="w-full h-full object-cover object-center"

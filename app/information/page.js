@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { v4 as uuidv4 } from "uuid";
+import Image from "next/image";
 
 const TABS = {
   INFO: "info",
@@ -92,7 +93,6 @@ export default function InformationPage() {
       }
     };
     fetchUser();
-    // eslint-disable-next-line
   }, []);
 
   // Lấy tournaments đã/đang tham gia
@@ -230,7 +230,9 @@ export default function InformationPage() {
         >
           <div className="flex items-center gap-6 mb-2">
             <div className="relative">
-              <img
+              <Image
+                width={20}
+                height={20}
                 src={avatarUrl || "/assets/images/thumbnail_1.webp"}
                 alt="avatar"
                 className="w-20 h-20 rounded-full object-cover border"

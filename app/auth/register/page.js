@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { supabase } from "../../../lib/supabaseClient";
+import Link from "next/link";
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
@@ -150,9 +151,12 @@ export default function RegisterPage() {
         </button>
         <div style={{ textAlign: "center", marginTop: 18, fontSize: 15 }}>
           Already have an account?{" "}
-          <a href="/auth/login" style={{ color: "#2563eb", fontWeight: 500 }}>
+          <Link
+            href="/auth/login"
+            style={{ color: "#2563eb", fontWeight: 500 }}
+          >
             Sign in
-          </a>
+          </Link>
         </div>
       </form>
     </div>

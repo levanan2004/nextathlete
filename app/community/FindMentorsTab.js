@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import Image from "next/image";
 
 // Modal hiển thị tất cả thông tin user (coach)
 function CoachModal({ coach, open, onClose }) {
@@ -37,7 +38,9 @@ function CoachModal({ coach, open, onClose }) {
           <div className="py-10 text-center text-gray-400">Loading...</div>
         ) : (
           <div className="flex flex-col items-center">
-            <img
+            <Image
+              width={20}
+              height={20}
               src={
                 userDetail?.profile_picture_url ||
                 "/assets/images/thumbnail_1.webp"
@@ -161,7 +164,9 @@ export default function FindMentorsTab() {
               className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-start hover:shadow-2xl transition"
             >
               <div className="flex items-center gap-4 mb-4 w-full">
-                <img
+                <Image
+                  width={20}
+                  height={20}
                   src={
                     coach.users?.profile_picture_url ||
                     "/assets/images/thumbnail_1.webp"

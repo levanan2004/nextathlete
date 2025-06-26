@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import Image from "next/image";
 
 const DEFAULT_AVATAR = "/assets/images/thumbnail_1.webp";
 
@@ -13,7 +14,6 @@ export default function ArticleComments({ articleId }) {
   useEffect(() => {
     fetchComments();
     getCurrentUserId();
-    // eslint-disable-next-line
   }, [articleId]);
 
   const getCurrentUserId = async () => {
@@ -79,7 +79,9 @@ export default function ArticleComments({ articleId }) {
         ) : (
           comments.map((c) => (
             <div key={c.id} className="bg-gray-50 rounded p-2 flex gap-2">
-              <img
+              <Image
+                width={20}
+                height={20}
                 src={c.users?.profile_picture_url || DEFAULT_AVATAR}
                 alt="avatar"
                 className="w-8 h-8 rounded-full object-cover"

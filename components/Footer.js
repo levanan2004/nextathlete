@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 export default function FooterComponent() {
@@ -16,7 +17,7 @@ export default function FooterComponent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           <div className="lg:col-span-2">
-            <a href="/" className="flex items-center space-x-2 mb-4">
+            <Link href="/" className="flex items-center space-x-2 mb-4">
               <div className="bg-gradient-to-br from-[#3b82f6] to-[#f97316] p-2 rounded-lg">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -39,7 +40,7 @@ export default function FooterComponent() {
                   Athlete
                 </span>
               </div>
-            </a>
+            </Link>
             <p className="text-gray-300 mb-6 max-w-md">
               Empowering young athletes worldwide with personalized guidance,
               opportunities, and connections to achieve their dreams.
@@ -134,12 +135,12 @@ export default function FooterComponent() {
             <h3 className="text-lg font-semibold mb-4">Platform</h3>
             <ul className="space-y-2">
               <li>
-                <a
+                <Link
                   className="text-gray-300 hover:text-white transition-colors"
                   href="/"
                 >
                   Sports Roadmaps
-                </a>
+                </Link>
               </li>
               <li>
                 <a
