@@ -35,7 +35,7 @@ export default function TournamentCard({ t }) {
       }
     };
     fetchUser();
-  }, []);
+  }, [t.id]);
 
   const handleRegister = async (e) => {
     e.preventDefault();

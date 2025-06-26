@@ -14,7 +14,7 @@ export default function ArticleComments({ articleId }) {
   useEffect(() => {
     fetchComments();
     getCurrentUserId();
-  }, [articleId]);
+  }, [fetchComments]); // Chỉ cần fetchComments
 
   const getCurrentUserId = async () => {
     const { data: sessionData } = await supabase.auth.getSession();
@@ -22,7 +22,7 @@ export default function ArticleComments({ articleId }) {
     setUserId(uid);
   };
 
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("comments")
@@ -31,7 +31,7 @@ export default function ArticleComments({ articleId }) {
       .order("created_at", { ascending: true });
     setComments(Array.isArray(data) ? data : []);
     setLoading(false);
-  };
+  }, [articleId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
