@@ -64,8 +64,8 @@ export default function TournamentCard({ t }) {
     <div className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col">
       <div className="relative">
         <Image
-          width={20}
-          height={20}
+          width={200}
+          height={100}
           src={`/assets/images/${t.thumbnail_url}`}
           alt={t.title}
           className="w-full h-40 object-cover"

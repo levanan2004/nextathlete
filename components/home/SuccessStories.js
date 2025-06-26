@@ -53,12 +53,12 @@ export default function SuccessStories() {
   const next = () => setCurrent((c) => (c === stories.length - 1 ? 0 : c + 1));
 
   return (
-    <section className="w-full bg-gradient-to-br from-[#f4f8ff] via-white to-[#fff8f4] py-16">
+    <section className="w-full bg-gradient-to-br from-[#111827] via-black to-purple-900 py-16">
       <div className="max-w-5xl mx-auto px-2">
-        <h2 className="text-4xl md:text-5xl font-extrabold text-center mb-4 text-gray-900">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-4 bg-gradient-to-r from-white via-purple-500 to-purple-900 bg-clip-text text-transparent">
           Success Stories
         </h2>
-        <p className="text-center text-gray-500 text-lg mb-12 max-w-2xl mx-auto">
+        <p className="text-center text-gray-300 text-lg mb-12 max-w-2xl mx-auto">
           Real athletes, real achievements. See how IgniteAthlete has helped
           young talents transform their dreams into reality.
         </p>
@@ -69,8 +69,8 @@ export default function SuccessStories() {
               {/* Left: Large image */}
               <div className="w-1/2 min-w-[220px] relative flex flex-col justify-end">
                 <Image
-                  width={20}
-                  height={20}
+                  width={100}
+                  height={100}
                   src={stories[current].image}
                   alt={stories[current].name}
                   className="w-full h-full object-cover object-center"
@@ -181,7 +181,7 @@ function StatBox({ value, label }) {
       <div className="text-3xl md:text-4xl font-extrabold text-blue-700 mb-1">
         {value}
       </div>
-      <div className="text-gray-700 text-lg text-center">{label}</div>
+      <div className="text-white text-lg text-center">{label}</div>
     </div>
   );
 }

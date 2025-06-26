@@ -231,10 +231,11 @@ export default function InformationPage() {
           <div className="flex items-center gap-6 mb-2">
             <div className="relative">
               <Image
-                width={20}
-                height={20}
+                width={100}
+                height={100}
                 src={avatarUrl || "/assets/images/thumbnail_1.webp"}
                 alt="avatar"
+                quality={90}
                 className="w-20 h-20 rounded-full object-cover border"
               />
               <button

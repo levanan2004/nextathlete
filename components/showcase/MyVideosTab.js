@@ -29,11 +29,13 @@ const MyVideosTab = () => {
 
   return (
     <div>
-      <h2 className="font-bold text-xl mb-4">My Uploaded Videos</h2>
+      <h2 className="font-bold text-xl mb-4 text-purple-600">
+        My Uploaded Videos
+      </h2>
       {loading ? (
-        <div className="text-center text-gray-400 py-10">Loading...</div>
+        <div className="text-center  py-10 text-gray-300">Loading...</div>
       ) : videos.length === 0 ? (
-        <div className="text-center text-gray-400 py-10">
+        <div className="text-center text-gray-300 py-10">
           You haven&apos;t uploaded any videos yet.
         </div>
       ) : (

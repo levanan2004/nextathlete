@@ -17,13 +17,13 @@ export default function TournamentsPage() {
   }, []);
 
   return (
-    <div className="bg-slate-50 min-h-screen pb-12">
+    <div className="bg-black min-h-screen pb-12">
       <div className="max-w-7xl mx-auto px-4">
         <div className="pt-10 pb-6">
-          <h1 className="text-3xl md:text-4xl font-extrabold mb-2">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-4 bg-gradient-to-r from-white via-purple-500 to-purple-900 bg-clip-text text-transparent">
             Discover Tournaments & Opportunities
-          </h1>
-          <div className="text-gray-500 text-lg mb-6">
+          </h2>
+          <div className="text-gray-300 text-lg mb-6">
             Find competitions, showcases, and events to take your athletic
             career to the next level
           </div>
@@ -49,7 +49,7 @@ export default function TournamentsPage() {
             </button>
           </div>
           <div className="flex items-center justify-between mb-4">
-            <div className="font-bold text-xl">
+            <div className="font-bold text-xl text-gray-300">
               {tournaments.length} Tournaments Found
             </div>
             <select className="px-4 py-2 rounded-lg border border-gray-200 bg-white text-base outline-none">

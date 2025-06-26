@@ -18,8 +18,8 @@ function UserModal({ user, open, onClose }) {
         <div className="flex flex-col items-center">
           <div className="font-bold text-xl mb-1">
             <Image
-              width={20}
-              height={20}
+              width={100}
+              height={100}
               src={
                 user.profile_picture_url || "/assets/images/thumbnail_1.webp"
               }
@@ -130,8 +130,8 @@ const BrowseVideosTab = () => {
       title={video.users?.full_name}
     >
       <Image
-        width={20}
-        height={20}
+        width={100}
+        height={100}
         src={
           video.users?.profile_picture_url || "/assets/images/thumbnail_1.webp"
         }
@@ -151,14 +151,14 @@ const BrowseVideosTab = () => {
           <input
             type="text"
             placeholder="Search videos, athletes, or skills..."
-            className="border px-4 py-2 rounded-lg w-full"
+            className="border px-4 py-2 rounded-lg w-full bg-gray-400 text-white"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center ">
           <select
-            className="border px-4 py-2 rounded-lg"
+            className="border px-4 py-2 rounded-lg bg-purple-600 text-white"
             value={selectedSport}
             onChange={(e) => setSelectedSport(e.target.value)}
           >
@@ -245,7 +245,7 @@ const BrowseVideosTab = () => {
       {/* Trending This Week */}
       {trendingThisWeek.length > 0 && (
         <>
-          <div className="text-xl font-bold mb-2 mt-8">
+          <div className="text-xl font-bold mb-2 mt-8 text-purple-600">
             🔥 Trending This Week
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
@@ -302,9 +302,9 @@ const BrowseVideosTab = () => {
       )}
 
       {/* All Videos */}
-      <h2 className="font-bold text-xl mb-4">
+      <h2 className="font-bold text-xl mb-4 text-purple-600">
         All Videos{" "}
-        <span className="text-base font-normal text-gray-500">
+        <span className="text-base font-normal text-purple-600">
           ({filteredVideos.length})
         </span>
       </h2>

@@ -155,14 +155,6 @@ const UploadVideoTab = () => {
             <span className="text-xs text-gray-400 mt-1">
               Maximum file size: 100MB. Supported formats: MP4, MOV, AVI
             </span>
-            <span className="mt-2">
-              <button
-                type="button"
-                className="bg-blue-600 text-white px-4 py-1 rounded"
-              >
-                Choose File
-              </button>
-            </span>
             {file && (
               <span className="mt-2 text-sm text-green-600">{file.name}</span>
             )}

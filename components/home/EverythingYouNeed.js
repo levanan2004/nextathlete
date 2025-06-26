@@ -1,10 +1,11 @@
 export default function EverythingYouNeed() {
   return (
-    <section className="w-full py-16">
+    <section className="w-full py-16 bg-gradient-to-br from-purple-900 via-black to-[#111827]">
       <div className="max-w-5xl mx-auto px-4">
-        <h2 className="text-4xl md:text-5xl font-extrabold text-center mb-4 text-gray-900">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-4 bg-gradient-to-r from-white via-purple-500 to-purple-900 bg-clip-text text-transparent">
           Everything You Need to Succeed
         </h2>
+
         <p className="text-center text-gray-500 text-lg mb-12 max-w-2xl mx-auto">
           Our comprehensive platform provides all the tools, guidance, and
           opportunities young athletes need to reach their full potential.
@@ -78,7 +79,7 @@ export default function EverythingYouNeed() {
 
 function FeatureCard({ icon, title, desc, stat }) {
   return (
-    <div className="bg-[#fafbfc] rounded-2xl shadow px-7 py-8 flex flex-col min-h-[260px]">
+    <div className="bg-[#e1e1e1] rounded-2xl shadow px-7 py-8 flex flex-col min-h-[260px]">
       <div className="mb-4">{icon}</div>
       <div className="text-2xl font-bold text-gray-900 mb-2">{title}</div>
       <div className="text-gray-600 text-base mb-4">{desc}</div>

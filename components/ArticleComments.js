@@ -80,8 +80,8 @@ export default function ArticleComments({ articleId }) {
           comments.map((c) => (
             <div key={c.id} className="bg-gray-50 rounded p-2 flex gap-2">
               <Image
-                width={20}
-                height={20}
+                width={100}
+                height={100}
                 src={c.users?.profile_picture_url || DEFAULT_AVATAR}
                 alt="avatar"
                 className="w-8 h-8 rounded-full object-cover"

@@ -1,21 +1,37 @@
+"use client";
+
+import Link from "next/link";
+
 export default function ReadyToStart() {
   return (
-    <section className="w-full flex justify-center py-12">
-      <div className="w-full max-w-5xl">
-        <div className="rounded-2xl bg-gradient-to-r from-[#f2f7fe] to-[#fff7ee] px-6 py-12 flex flex-col items-center shadow">
-          <h3 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-3 text-center">
-            Ready to Start Your Journey?
-          </h3>
-          <p className="text-gray-600 text-lg mb-7 text-center">
-            Join thousands of athletes who are already on their path to success.
-          </p>
-          <a
-            href="/register"
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl px-8 py-4 text-lg shadow transition"
+    <section className="w-full bg-gradient-to-br from-purple-900 via-black to-[#111827] py-20">
+      <div className="max-w-6xl mx-auto px-6 lg:px-8 text-center">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
+          Ready to Start Your Athletic Journey?
+        </h2>
+        <p className="text-lg md:text-xl text-purple-100 mb-8 max-w-3xl mx-auto">
+          Join thousands of students already pursuing their dreams
+        </p>
+
+        <Link
+          href="/auth/register"
+          className="inline-flex items-center gap-2 bg-white text-purple-700 font-semibold text-lg px-8 py-4 rounded-lg hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-lg"
+        >
+          Get Started Today
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            Get Started Free
-          </a>
-        </div>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 8l4 4m0 0l-4 4m4-4H3"
+            />
+          </svg>
+        </Link>
       </div>
     </section>
   );

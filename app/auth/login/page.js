@@ -6,18 +6,50 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function LoginPage() {
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ emailOrUsername: "", password: "" });
   const [loading, setLoading] = useState(false);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
+  // Kiểm tra input là email hay username
+  function isEmail(input) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input);
+  }
+
+  // Lấy email từ username
+  async function getEmailFromUsername(username) {
+    const { data, error } = await supabase
+      .from("users")
+      .select("email")
+      .eq("username", username.toLowerCase())
+      .single();
+
+    return data?.email || null;
+  }
+
   async function handleLogin(e) {
     e.preventDefault();
     setLoading(true);
+
+    let emailToUse = form.emailOrUsername;
+
+    // Nếu không phải email, tìm email từ username
+    if (!isEmail(form.emailOrUsername)) {
+      const email = await getEmailFromUsername(form.emailOrUsername);
+      if (!email) {
+        setLoading(false);
+        alert(
+          "Username not found. Please check your username or use your email address."
+        );
+        return;
+      }
+      emailToUse = email;
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
-      email: form.email,
+      email: emailToUse,
       password: form.password,
     });
 
@@ -27,10 +59,10 @@ export default function LoginPage() {
       return;
     }
 
-    // ✅ Force đồng bộ session vào cookie
+    // Force đồng bộ session vào cookie
     await supabase.auth.getSession();
 
-    // Sau khi đăng nhập thành công, đồng bộ vào bảng users, students, coaches, parents...
+    // Đồng bộ dữ liệu user (giữ nguyên logic cũ)
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -42,6 +74,7 @@ export default function LoginPage() {
         .single();
 
       if (!existingUser) {
+        // Logic đồng bộ dữ liệu từ localStorage (giữ nguyên)
         const fullName = localStorage.getItem("fullName") || "";
         const role = localStorage.getItem("role") || "";
         const location = localStorage.getItem("location") || "";
@@ -59,6 +92,7 @@ export default function LoginPage() {
           },
         ]);
 
+        // Logic cho student, coach, parent (giữ nguyên)
         if (role === "student") {
           const age = localStorage.getItem("age") || "";
           const sport = localStorage.getItem("sport") || "";
@@ -128,220 +162,147 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#f8fafc",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <div style={{ marginBottom: 32, textAlign: "center" }}>
-        <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 8,
-            marginBottom: 8,
-          }}
-        >
-          <div
-            style={{
-              background: "linear-gradient(135deg, #2563eb, #f59e42)",
-              padding: 8,
-              borderRadius: 8,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="lucide lucide-zap h-6 w-6 text-white"
-            >
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-            </svg>
+    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
+      {/* Header */}
+      <div className="mb-8 text-center">
+        <div className="inline-flex items-center gap-3 mb-4">
+          <div className="bg-white text-black px-3 py-1 rounded font-bold text-lg">
+            Ignite<span className="text-purple-600">Athlete</span>
           </div>
-          <span style={{ fontWeight: 700, fontSize: 22, color: "#222" }}>
-            Ignite<span style={{ color: "#2563eb" }}>Athlete</span>
-          </span>
         </div>
-        <div style={{ fontWeight: 700, fontSize: 32, marginBottom: 4 }}>
-          Welcome back
-        </div>
-        <div style={{ color: "#666", fontSize: 16 }}>
-          Continue your athletic journey
-        </div>
+        <h1 className="text-4xl font-bold text-white mb-2">Welcome back!</h1>
+        <p className="text-gray-400 text-lg">
+          Sign in to continue your athletic journey
+        </p>
       </div>
-      <form
-        onSubmit={handleLogin}
-        style={{
-          background: "#fff",
-          borderRadius: 16,
-          boxShadow: "0 8px 32px #0002",
-          padding: 32,
-          minWidth: 350,
-          maxWidth: 380,
-          width: "100%",
-        }}
-      >
-        <div style={{ marginBottom: 18 }}>
-          <label style={labelStyle}>Email Address</label>
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            placeholder="Enter your email"
-            style={inputStyle}
-            required
-          />
-        </div>
-        <div style={{ marginBottom: 8 }}>
-          <label style={labelStyle}>Password</label>
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            placeholder="Enter your password"
-            style={inputStyle}
-            required
-          />
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: 18,
-            fontSize: 14,
-          }}
-        >
-          <label>
-            <input type="checkbox" style={{ marginRight: 6 }} /> Remember me
-          </label>
-          <Link
-            href="/auth/login"
-            style={{ color: "#2563eb", fontWeight: 500 }}
+
+      {/* Login Form */}
+      <div className="bg-gray-800 rounded-xl p-8 w-full max-w-md border border-gray-700">
+        <form onSubmit={handleLogin} className="space-y-6">
+          {/* Email/Username Input */}
+          <div>
+            <label className="block text-gray-300 text-sm font-medium mb-2">
+              Email address
+            </label>
+            <div className="relative">
+              <svg
+                className="absolute left-3 top-3 h-5 w-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+                />
+              </svg>
+              <input
+                type="text"
+                name="emailOrUsername"
+                value={form.emailOrUsername}
+                onChange={handleChange}
+                placeholder="Enter your email"
+                className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Password Input */}
+          <div>
+            <label className="block text-gray-300 text-sm font-medium mb-2">
+              Password
+            </label>
+            <div className="relative">
+              <svg
+                className="absolute left-3 top-3 h-5 w-5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
+              </svg>
+              <input
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                placeholder="Enter your password"
+                className="w-full pl-10 pr-10 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                required
+              />
+              <svg
+                className="absolute right-3 top-3 h-5 w-5 text-gray-400 cursor-pointer"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                />
+              </svg>
+            </div>
+          </div>
+
+          {/* Sign In Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Forgot password?
-          </Link>
-        </div>
-        <button type="submit" style={btnSignIn} disabled={loading}>
-          {loading ? "Signing In..." : "Sign In →"}
-        </button>
-        <div
-          style={{
-            margin: "18px 0 12px 0",
-            textAlign: "center",
-            color: "#aaa",
-            fontSize: 14,
-          }}
-        >
-          <span style={{ background: "#f3f4f6", padding: "0 12px" }}>
-            Or continue with
-          </span>
-        </div>
-        <div style={{ display: "flex", gap: 12 }}>
+            {loading ? "Signing In..." : "Sign In"}
+          </button>
+
+          {/* Divider */}
+          <div className="flex items-center my-6">
+            <div className="flex-1 border-t border-gray-600"></div>
+            <span className="px-4 text-sm text-gray-400">Or continue with</span>
+            <div className="flex-1 border-t border-gray-600"></div>
+          </div>
+
+          {/* Google Login */}
           <button
             type="button"
-            style={btnSocial}
             onClick={() => alert("Google login chưa tích hợp")}
+            className="w-full bg-white hover:bg-gray-100 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-3 border"
           >
             <Image
               src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="Google"
               width={20}
               height={20}
-              style={{ width: 20, marginRight: 8 }}
             />
-            Google
+            Continue with Google
           </button>
-          <button
-            type="button"
-            style={btnSocial}
-            onClick={() => alert("Facebook login chưa tích hợp")}
-          >
-            <Image
-              src="https://www.svgrepo.com/show/475647/facebook-color.svg"
-              alt="Facebook"
-              width={20}
-              height={20}
-              style={{ width: 20, marginRight: 8 }}
-            />
-            Facebook
-          </button>
-        </div>
-        <div style={{ textAlign: "center", marginTop: 18, fontSize: 15 }}>
-          Don&apos;t have an account?{" "}
-          <a
-            href="/auth/register"
-            style={{ color: "#2563eb", fontWeight: 500 }}
-          >
-            Sign up for free
-          </a>
-        </div>
-      </form>
+
+          {/* Sign up link */}
+          <div className="text-center mt-6">
+            <span className="text-gray-400">Don't have an account? </span>
+            <Link
+              href="/auth/register"
+              className="text-purple-400 font-medium hover:text-purple-300 transition-colors"
+            >
+              Sign up
+            </Link>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
-
-const inputStyle = {
-  width: "100%",
-  padding: "12px 14px",
-  borderRadius: 8,
-  border: "1.5px solid #e5e7eb",
-  fontSize: 15,
-  marginBottom: 0,
-  outline: "none",
-  boxShadow: "0 2px 8px #0001",
-  background: "#fff",
-};
-
-const labelStyle = {
-  display: "block",
-  marginBottom: 6,
-  fontWeight: 500,
-  fontSize: 15,
-};
-
-const btnSignIn = {
-  width: "100%",
-  background: "#2563eb",
-  color: "#fff",
-  borderRadius: 8,
-  padding: "12px 0",
-  border: "none",
-  fontWeight: 600,
-  fontSize: 18,
-  marginTop: 8,
-  marginBottom: 8,
-  boxShadow: "0 2px 8px #2563eb22",
-  cursor: "pointer",
-};
-
-const btnSocial = {
-  flex: 1,
-  background: "#f3f4f6",
-  color: "#222",
-  borderRadius: 8,
-  padding: "10px 0",
-  border: "none",
-  fontWeight: 500,
-  fontSize: 16,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  cursor: "pointer",
-};

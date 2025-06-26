@@ -6,7 +6,7 @@ import EverythingYouNeed from "@/components/home/EverythingYouNeed";
 import ReadyToStart from "@/components/home/ReadyToStart";
 import SuccessStories from "@/components/home/SuccessStories";
 import AthleticJourneyComponent from "@/components/home/AthleticJourneyComponent";
-import ChooseYourSport from "@/components/ChooseYourSport"; // Đúng
+import OurMission from "@/components/home/OurMission";
 
 export default function Home() {
   useEffect(() => {
@@ -31,9 +31,8 @@ export default function Home() {
 
   return (
     <>
-      test CI/CD
       <HeroSection />
-      <ChooseYourSport />
+      <OurMission />
       <EverythingYouNeed />
       <ReadyToStart />
       <SuccessStories />

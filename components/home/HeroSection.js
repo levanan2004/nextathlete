@@ -2,10 +2,13 @@ import Link from "next/link";
 
 export default function HeroSection() {
   return (
-    <section className="w-full min-h-[80vh] flex flex-col items-center justify-center bg-gradient-to-br from-[#f4f8ff] via-white to-[#fff8f4]">
+    <section className="w-full min-h-[80vh] flex flex-col items-center justify-center bg-gradient-to-br from-purple-900 via-black to-[#111827]">
       <div className="max-w-3xl w-full mx-auto text-center pt-16 pb-10">
         <h1 className="text-4xl md:text-6xl font-extrabold mb-4">
-          Ignite Your <br />
+          <span className="bg-gradient-to-r from-white via-purple-500 to-purple-900 bg-clip-text text-transparent">
+            Ignite Your
+          </span>
+          <br />
           <span className="bg-gradient-to-r from-blue-700 via-purple-600 to-orange-400 bg-clip-text text-transparent">
             Athletic Dreams
           </span>

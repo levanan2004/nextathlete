@@ -39,8 +39,8 @@ function CoachModal({ coach, open, onClose }) {
         ) : (
           <div className="flex flex-col items-center">
             <Image
-              width={20}
-              height={20}
+              width={100}
+              height={100}
               src={
                 userDetail?.profile_picture_url ||
                 "/assets/images/thumbnail_1.webp"
@@ -165,8 +165,8 @@ export default function FindMentorsTab() {
             >
               <div className="flex items-center gap-4 mb-4 w-full">
                 <Image
-                  width={20}
-                  height={20}
+                  width={100}
+                  height={100}
                   src={
                     coach.users?.profile_picture_url ||
                     "/assets/images/thumbnail_1.webp"
