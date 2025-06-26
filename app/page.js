@@ -31,6 +31,7 @@ export default function Home() {
 
   return (
     <>
+      test CI/CD
       <HeroSection />
       <ChooseYourSport />
       <EverythingYouNeed />

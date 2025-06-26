@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react"; // Thêm useCallback
 import { supabase } from "@/lib/supabaseClient";
 import Image from "next/image";
 
