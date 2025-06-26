@@ -2,6 +2,7 @@
 import { useState, useRef } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useAuth } from "@/contexts/AuthContext";
+import Image from "next/image";
 
 export default function PostItemModal({
   isOpen,
@@ -348,9 +349,11 @@ export default function PostItemModal({
               </div>
             ) : (
               <div className="relative">
-                <img
+                <Image
                   src={uploadedImage}
-                  alt="Uploaded item"
+                  alt="Uploaded preview"
+                  width={400}
+                  height={192}
                   className="w-full h-48 object-cover rounded-lg"
                 />
                 <button
