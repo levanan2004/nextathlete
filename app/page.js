@@ -10,10 +10,19 @@ import OurMission from "@/components/home/OurMission";
 
 export default function Home() {
   useEffect(() => {
-    // Xử lý Google OAuth hash fragment
-    if (window.location.hash && window.location.hash.includes("access_token")) {
-      window.location.href = window.location.origin;
+    // Chỉ reload nếu có access_token và chưa có session Supabase
+    async function handleOAuthHash() {
+      if (
+        window.location.hash &&
+        window.location.hash.includes("access_token")
+      ) {
+        const { data } = await supabase.auth.getSession();
+        if (!data?.session) {
+          window.location.href = window.location.origin;
+        }
+      }
     }
+    handleOAuthHash();
   }, []);
 
   useEffect(() => {
