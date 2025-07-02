@@ -161,6 +161,17 @@ export default function LoginPage() {
     window.location.href = "/";
   }
 
+  async function handleGoogleLogin() {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo:
+          typeof window !== "undefined" ? window.location.origin : undefined,
+      },
+    });
+    if (error) alert(error.message);
+  }
+
   return (
     <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
       {/* Header */}
@@ -279,7 +290,7 @@ export default function LoginPage() {
           {/* Google Login */}
           <button
             type="button"
-            onClick={() => alert("Google login chưa tích hợp")}
+            onClick={handleGoogleLogin}
             className="w-full bg-white hover:bg-gray-100 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-3 border"
           >
             <Image

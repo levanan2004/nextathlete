@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { usePathname } from "next/navigation";
 
 const AuthContext = createContext({});
 
@@ -17,6 +18,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const pathname = usePathname();
 
   useEffect(() => {
     // Get initial user
@@ -27,8 +29,10 @@ export const AuthProvider = ({ children }) => {
         } = await supabase.auth.getUser();
         setUser(user);
 
-        if (user) {
+        if (user && pathname !== "/add_information") {
           await fetchUserProfile(user.id);
+        } else {
+          setUserProfile(null);
         }
       } catch (error) {
         console.error("Error getting user:", error);
@@ -47,7 +51,7 @@ export const AuthProvider = ({ children }) => {
 
       setUser(session?.user ?? null);
 
-      if (session?.user) {
+      if (session?.user && pathname !== "/add_information") {
         await fetchUserProfile(session.user.id);
       } else {
         setUserProfile(null);
@@ -57,7 +61,7 @@ export const AuthProvider = ({ children }) => {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [pathname]);
 
   const fetchUserProfile = async (userId) => {
     try {
@@ -70,9 +74,9 @@ export const AuthProvider = ({ children }) => {
       if (error) throw error;
 
       setUserProfile(profile);
-      console.log("Profile loaded:", profile);
+      // console.log("Profile loaded:", profile);
     } catch (error) {
-      console.error("Error fetching profile:", error);
+      // Không log lỗi đỏ khi không có profile (user mới đăng nhập)
       setUserProfile(null);
     }
   };
