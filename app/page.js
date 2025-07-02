@@ -10,6 +10,13 @@ import OurMission from "@/components/home/OurMission";
 
 export default function Home() {
   useEffect(() => {
+    // Xử lý Google OAuth hash fragment
+    if (window.location.hash && window.location.hash.includes("access_token")) {
+      window.location.href = window.location.origin;
+    }
+  }, []);
+
+  useEffect(() => {
     async function checkProfile() {
       const { data, error: userError } = await supabase.auth.getUser();
 
