@@ -20,46 +20,33 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
 
+  // Helper: fetch user and profile
+  const fetchUserAndProfile = async (userObj) => {
+    setUser(userObj);
+    if (userObj && pathname !== "/add_information") {
+      await fetchUserProfile(userObj.id);
+    } else {
+      setUserProfile(null);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     // Get initial user
     const getUser = async () => {
-      try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        setUser(user);
-
-        if (user && pathname !== "/add_information") {
-          await fetchUserProfile(user.id);
-        } else {
-          setUserProfile(null);
-        }
-      } catch (error) {
-        console.error("Error getting user:", error);
-      } finally {
-        setLoading(false);
-      }
+      setLoading(true);
+      const { data, error } = await supabase.auth.getUser();
+      await fetchUserAndProfile(data?.user || null);
     };
-
     getUser();
 
     // Listen to auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth event:", event);
-
-      setUser(session?.user ?? null);
-
-      if (session?.user && pathname !== "/add_information") {
-        await fetchUserProfile(session.user.id);
-      } else {
-        setUserProfile(null);
-      }
-
-      setLoading(false);
+      // Đảm bảo luôn cập nhật user và profile khi có sự kiện auth
+      await fetchUserAndProfile(session?.user ?? null);
     });
-
     return () => subscription.unsubscribe();
   }, [pathname]);
 
@@ -70,13 +57,9 @@ export const AuthProvider = ({ children }) => {
         .select("username, profile_picture_url, full_name")
         .eq("id", userId)
         .single();
-
       if (error) throw error;
-
       setUserProfile(profile);
-      // console.log("Profile loaded:", profile);
     } catch (error) {
-      // Không log lỗi đỏ khi không có profile (user mới đăng nhập)
       setUserProfile(null);
     }
   };
