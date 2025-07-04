@@ -26,7 +26,7 @@ export default function HeroSection() {
             <span className="ml-1">→</span>
           </Link>
           <Link
-            href="/success-stories"
+            href="/"
             className="bg-white border border-gray-200 hover:border-purple-400 text-blue-700 font-semibold rounded-xl px-8 py-4 text-lg shadow transition flex items-center justify-center gap-2"
           >
             <svg

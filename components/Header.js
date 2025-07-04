@@ -3,66 +3,15 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { supabase } from "@/lib/supabaseClient";
+import { useAuth } from "@/contexts/AuthContext";
 import { usePathname, useRouter } from "next/navigation";
 
 export default function Header() {
-  const [user, setUser] = useState(null);
-  const [userProfile, setUserProfile] = useState(null);
-  const [profilePicture, setProfilePicture] = useState("");
-  const [displayName, setDisplayName] = useState("");
+  const { user, userProfile, loading, signOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const pathname = usePathname();
   const router = useRouter();
-
-  // Fetch user from supabase auth
-  useEffect(() => {
-    const getUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      setUser(data?.user || null);
-    };
-    getUser();
-  }, []);
-
-  // Fetch user profile từ bảng users, nhưng bỏ qua nếu đang ở /add_information
-  useEffect(() => {
-    if (!user) {
-      setUserProfile(null);
-      setProfilePicture("");
-      setDisplayName("");
-      return;
-    }
-
-    // Nếu đang ở trang add_information thì không fetch profile và không hiển thị tên/avatar
-    if (pathname === "/add_information") {
-      setUserProfile(null);
-      setProfilePicture("");
-      setDisplayName(""); // Để trống hoàn toàn
-      return;
-    }
-
-    const fetchProfile = async () => {
-      const { data, error } = await supabase
-        .from("users")
-        .select("username, profile_picture_url, full_name, role")
-        .eq("id", user.id)
-        .single();
-
-      if (error || !data) {
-        setUserProfile(null);
-        setProfilePicture("");
-        setDisplayName(user.email || "User");
-        return;
-      }
-
-      setUserProfile(data);
-      setProfilePicture(data.profile_picture_url || "");
-      setDisplayName(data.username || data.full_name || user.email || "User");
-    };
-
-    fetchProfile();
-  }, [user, pathname]);
 
   // Đóng menu khi click ngoài
   useEffect(() => {
@@ -83,27 +32,24 @@ export default function Header() {
 
   // Đăng xuất
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setUserProfile(null);
-    setProfilePicture("");
-    setDisplayName("");
-    window.location.href = "/auth/login";
+    await signOut();
+    router.push("/auth/login");
   };
 
-  // Redirect user to /auth/login if not logged in and not on home page
-  useEffect(() => {
-    // Nếu chưa đăng nhập và không ở trang home ("/") hoặc trang login/register/add_information
-    if (
-      !user &&
-      pathname !== "/" &&
-      pathname !== "/auth/login" &&
-      pathname !== "/auth/register" &&
-      pathname !== "/add_information"
-    ) {
-      router.replace("/auth/login");
-    }
-  }, [user, pathname, router]);
+  // Get display info from userProfile or user
+  const getDisplayName = () => {
+    if (pathname === "/add_information") return "";
+    if (!user) return "";
+    return userProfile?.username || userProfile?.full_name || user.email || "User";
+  };
+
+  const getProfilePicture = () => {
+    if (pathname === "/add_information") return "";
+    return userProfile?.profile_picture_url || "";
+  };
+
+  const displayName = getDisplayName();
+  const profilePicture = getProfilePicture();
 
   return (
     <header className="w-full bg-black border-b border-gray-700 shadow-lg px-2 sm:px-4 md:px-8 h-16 flex items-center sticky top-0 z-20">

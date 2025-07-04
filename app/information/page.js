@@ -7,6 +7,7 @@ import Image from "next/image";
 const TABS = {
   INFO: "info",
   TOURNAMENTS: "tournaments",
+  CHILDREN: "children",
 };
 
 function MyTournamentCard({ t }) {
@@ -63,6 +64,13 @@ export default function InformationPage() {
   const [avatarUrl, setAvatarUrl] = useState("");
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef();
+  
+  // For parent-child functionality
+  const [parentData, setParentData] = useState(null);
+  const [childData, setChildData] = useState(null);
+  const [studentId, setStudentId] = useState("");
+  const [submittingStudentId, setSubmittingStudentId] = useState(false);
+  const [studentIdError, setStudentIdError] = useState("");
 
   // Lấy user hiện tại và profile
   useEffect(() => {
@@ -91,6 +99,11 @@ export default function InformationPage() {
       if (userData?.role === "student") {
         fetchTournaments(authData.user.id);
       }
+      
+      // Nếu là parent thì lấy thông tin parent và con
+      if (userData?.role === "parent") {
+        fetchParentData(authData.user.id);
+      }
     };
     fetchUser();
   }, []);
@@ -104,6 +117,103 @@ export default function InformationPage() {
       .order("joined_at", { ascending: false });
 
     setTournaments(Array.isArray(data) ? data : []);
+  };
+
+  // Lấy thông tin parent và con (nếu có)
+  const fetchParentData = async (userId) => {
+    // Lấy thông tin parent từ bảng parents
+    const { data: parentData } = await supabase
+      .from("parents")
+      .select("*")
+      .eq("user_id", userId)
+      .single();
+
+    setParentData(parentData);
+
+    // Nếu parent có id_students, lấy thông tin student
+    if (parentData?.id_students) {
+      const { data: studentData } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", parentData.id_students)
+        .single();
+      
+      setChildData(studentData);
+    }
+  };
+
+  // Xử lý submit student ID
+  const handleSubmitStudentId = async (e) => {
+    e.preventDefault();
+    setSubmittingStudentId(true);
+    setStudentIdError("");
+
+    try {
+      // Trước tiên kiểm tra ID có tồn tại không
+      const { data: userData, error: userError } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", studentId)
+        .single();
+
+      if (userError || !userData) {
+        setStudentIdError("Không tìm thấy người dùng với ID này.");
+        setSubmittingStudentId(false);
+        return;
+      }
+
+      // Kiểm tra role có phải student không
+      if (userData.role !== "student") {
+        setStudentIdError("ID nhập không hợp lệ.");
+        setSubmittingStudentId(false);
+        return;
+      }
+
+      const studentData = userData;
+
+      // Cập nhật hoặc tạo mới record trong bảng parents
+      if (parentData) {
+        // Update existing record
+        const { error: updateError } = await supabase
+          .from("parents")
+          .update({ 
+            id_students: studentId,
+            child_name: studentData.full_name 
+          })
+          .eq("user_id", user.id);
+
+        if (updateError) {
+          setStudentIdError("Có lỗi xảy ra khi cập nhật thông tin.");
+          setSubmittingStudentId(false);
+          return;
+        }
+      } else {
+        // Create new record
+        const { error: insertError } = await supabase
+          .from("parents")
+          .insert({
+            user_id: user.id,
+            id_students: studentId,
+            child_name: studentData.full_name
+          });
+
+        if (insertError) {
+          setStudentIdError("Có lỗi xảy ra khi lưu thông tin.");
+          setSubmittingStudentId(false);
+          return;
+        }
+      }
+
+      // Refresh parent data
+      await fetchParentData(user.id);
+      setStudentId("");
+      alert("Đã liên kết thành công với học sinh!");
+      
+    } catch (error) {
+      setStudentIdError("Có lỗi xảy ra. Vui lòng thử lại.");
+    }
+    
+    setSubmittingStudentId(false);
   };
 
   // Xử lý lưu thông tin
@@ -221,6 +331,18 @@ export default function InformationPage() {
             Giải đấu đã tham gia
           </button>
         )}
+        {role === "parent" && (
+          <button
+            className={`px-5 py-2 rounded-lg font-semibold ${
+              tab === TABS.CHILDREN
+                ? "bg-blue-600 text-white"
+                : "bg-gray-100 text-gray-700"
+            }`}
+            onClick={() => setTab(TABS.CHILDREN)}
+          >
+            Thông tin con em
+          </button>
+        )}
       </div>
 
       {tab === TABS.INFO && (
@@ -272,6 +394,14 @@ export default function InformationPage() {
             </div>
           </div>
           <div>
+            <div>
+              <label className="block font-semibold mb-1">Id</label>
+              <input
+                className="border px-3 py-2 rounded w-full bg-gray-100"
+                value={profile.id || ""}
+                disabled
+              />
+            </div>
             <label className="block font-semibold mb-1">Họ tên</label>
             <input
               className="border px-3 py-2 rounded w-full"
@@ -340,6 +470,114 @@ export default function InformationPage() {
               {tournaments.map((t) => (
                 <MyTournamentCard key={t.tournaments.id + t.joined_at} t={t} />
               ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {tab === TABS.CHILDREN && role === "parent" && (
+        <div className="bg-white rounded-xl shadow p-6">
+          <h2 className="text-xl font-bold mb-6">Thông tin con em</h2>
+          
+          {!parentData?.id_students ? (
+            <div>
+              <p className="text-gray-600 mb-4">
+                Vui lòng nhập ID của học sinh để liên kết với tài khoản của bạn:
+              </p>
+              <form onSubmit={handleSubmitStudentId} className="space-y-4">
+                <div>
+                  <label className="block font-semibold mb-2">ID Học sinh</label>
+                  <input
+                    type="text"
+                    className="border px-3 py-2 rounded w-full"
+                    value={studentId}
+                    onChange={(e) => setStudentId(e.target.value)}
+                    placeholder="Nhập ID học sinh"
+                    required
+                  />
+                  {studentIdError && (
+                    <p className="text-red-500 text-sm mt-1">{studentIdError}</p>
+                  )}
+                </div>
+                <button
+                  type="submit"
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50"
+                  disabled={submittingStudentId || !studentId.trim()}
+                >
+                  {submittingStudentId ? "Đang kiểm tra..." : "Liên kết"}
+                </button>
+              </form>
+            </div>
+          ) : (
+            <div>
+              {childData ? (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 mb-6">
+                    <Image
+                      width={80}
+                      height={80}
+                      src={childData.profile_picture_url || "/assets/images/thumbnail_1.webp"}
+                      alt="Child avatar"
+                      quality={90}
+                      className="w-20 h-20 rounded-full object-cover border"
+                    />
+                    <div>
+                      <h3 className="font-bold text-lg">{childData.full_name}</h3>
+                      <p className="text-gray-500">{childData.email}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block font-semibold mb-1">ID</label>
+                      <div className="border px-3 py-2 rounded bg-gray-50">
+                        {childData.id}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block font-semibold mb-1">Họ tên</label>
+                      <div className="border px-3 py-2 rounded bg-gray-50">
+                        {childData.full_name}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block font-semibold mb-1">Email</label>
+                      <div className="border px-3 py-2 rounded bg-gray-50">
+                        {childData.email}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block font-semibold mb-1">Số điện thoại</label>
+                      <div className="border px-3 py-2 rounded bg-gray-50">
+                        {childData.phone || "Chưa cập nhật"}
+                      </div>
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block font-semibold mb-1">Địa chỉ</label>
+                      <div className="border px-3 py-2 rounded bg-gray-50">
+                        {childData.address || "Chưa cập nhật"}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block font-semibold mb-1">Ngày tạo tài khoản</label>
+                      <div className="border px-3 py-2 rounded bg-gray-50">
+                        {childData.created_at ? new Date(childData.created_at).toLocaleDateString() : "Không có thông tin"}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <p className="text-sm text-blue-700">
+                      <strong>Lưu ý:</strong> Thông tin này chỉ để xem. Để thay đổi thông tin của con em, 
+                      vui lòng yêu cầu con em đăng nhập vào tài khoản của mình và cập nhật.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-gray-500">
+                  Đang tải thông tin học sinh...
+                </div>
+              )}
             </div>
           )}
         </div>

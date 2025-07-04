@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [initialized, setInitialized] = useState(false);
   const pathname = usePathname();
 
   // Helper: fetch user and profile
@@ -29,24 +30,45 @@ export const AuthProvider = ({ children }) => {
       setUserProfile(null);
     }
     setLoading(false);
+    setInitialized(true);
   };
 
   useEffect(() => {
     // Get initial user
     const getUser = async () => {
       setLoading(true);
-      const { data, error } = await supabase.auth.getUser();
-      await fetchUserAndProfile(data?.user || null);
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        if (error && error.message.includes('Invalid JWT')) {
+          // JWT expired, clear auth
+          await supabase.auth.signOut();
+          setUser(null);
+          setUserProfile(null);
+        } else {
+          await fetchUserAndProfile(data?.user || null);
+        }
+      } catch (error) {
+        console.error('Auth error:', error);
+        setUser(null);
+        setUserProfile(null);
+        setLoading(false);
+        setInitialized(true);
+      }
     };
-    getUser();
+    
+    if (!initialized) {
+      getUser();
+    }
 
     // Listen to auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state change:', event, session?.user?.email);
       // Đảm bảo luôn cập nhật user và profile khi có sự kiện auth
       await fetchUserAndProfile(session?.user ?? null);
     });
+    
     return () => subscription.unsubscribe();
   }, [pathname]);
 
